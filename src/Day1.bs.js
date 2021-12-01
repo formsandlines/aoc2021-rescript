@@ -22,7 +22,29 @@ var increases = Belt_Array.keepWithIndexU(data, (function (n, i) {
 
 var incrCount = increases.length;
 
-console.log(increases, incrCount);
+console.log("Part 1: ", increases, incrCount);
+
+var sum = {
+  contents: 999999
+};
+
+var increases$1 = Belt_Array.keepWithIndexU(data, (function (n1, i) {
+        var match = Belt_Array.get(data, i + 1 | 0);
+        var match$1 = Belt_Array.get(data, i + 2 | 0);
+        if (match === undefined) {
+          return false;
+        }
+        if (match$1 === undefined) {
+          return false;
+        }
+        var prevSum = sum.contents;
+        sum.contents = (n1 + match | 0) + match$1 | 0;
+        return sum.contents > prevSum;
+      }));
+
+var incrCount$1 = increases$1.length;
+
+console.log("Part 2: ", increases$1, incrCount$1);
 
 var sample = "199\n200\n208\n210\n200\n207\n240\n269\n260\n263";
 
@@ -30,8 +52,9 @@ export {
   raw ,
   sample ,
   data ,
-  increases ,
-  incrCount ,
+  sum ,
+  increases$1 as increases,
+  incrCount$1 as incrCount,
   
 }
 /* raw Not a pure module */
