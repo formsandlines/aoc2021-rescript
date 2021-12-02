@@ -1,5 +1,5 @@
 {
-  "name": "rescript-adventofcode",
+  "name": "aoc2021-rescript",
   "version": "0.0.1",
   "sources": {
     "dir" : "src",
