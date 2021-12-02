@@ -1,21 +1,3 @@
-# ReScript Project Template
+# Advent of Code 2021 (in ReScript)
 
-The only official ReScript starter template.
-
-## Installation
-
-```sh
-npm install
-```
-
-## Build
-
-- Build: `npm run build`
-- Clean: `npm run clean`
-- Build & watch: `npm run start`
-
-## Run
-
-```sh
-node src/Demo.bs.js
-```
+This is my first AoC and I wanted to try it in ReScript to get some practice in the language. I am not necessarily optimizing for efficiency or anything; just want to get the job done and have some fun without investing too much time.
