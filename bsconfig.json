@@ -1,10 +1,10 @@
 {
   "name": "aoc2021-rescript",
   "version": "0.0.1",
-  "sources": {
+  "sources": [{
     "dir" : "src",
     "subdirs" : true
-  },
+  }, { "dir" : "test", "subdirs" : true }],
   "package-specs": {
     "module": "es6-global",
     "in-source": true
@@ -14,5 +14,5 @@
   ],
   "warnings": {
     "error" : "+101"
-  },
+  }
 }

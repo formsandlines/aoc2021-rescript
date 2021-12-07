@@ -13,3 +13,4 @@
 .merlin
 .editorconfig
 .vscode
+/test/
