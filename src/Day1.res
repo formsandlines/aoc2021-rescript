@@ -1,4 +1,4 @@
-@module("./data/day1_data.js") external raw: string = "data"
+let raw = Node_fs.readFileSync("./src/data/input_day1.txt", #utf8)
 
 let sample = "199
 200
@@ -11,7 +11,8 @@ let sample = "199
 260
 263"
 
-let data = raw->Js.String2.split(`\n`)
+let data = raw->Js.String2.split("\n")
+  ->Belt.Array.keep(str => str != "")
   ->Belt.Array.mapU((. str) => str->Belt.Int.fromString->Belt.Option.getExn)
 
 
