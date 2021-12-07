@@ -1,4 +1,4 @@
-@module("./data/day2_data.js") external raw: string = "data"
+let raw = Node_fs.readFileSync("./src/data/input_day2.txt", #utf8)
 
 let sample = "forward 5
 down 5
@@ -17,6 +17,7 @@ let makeInstr = (dirStr, val) => switch dirStr {
 }
 
 let data = raw->Js.String2.split(`\n`)
+  ->Belt.Array.keep(str => str != "")
   ->Belt.Array.mapU((. str) =>
     switch str->Js.String2.split(" ") {
       | [str, n] => makeInstr(str, n->Belt.Int.fromString->Belt.Option.getExn)
