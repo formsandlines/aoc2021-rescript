@@ -13,7 +13,7 @@ var naviData = Belt_Array.map(Helper.Input.toLines(data), (function (line) {
         return Belt_List.fromArray(Helper.ArrayExt.filterEmptyStr(line.trim().split("")));
       }));
 
-var Impossible = /* @__PURE__ */Caml_exceptions.create("Day10.Impossible");
+var ParseError = /* @__PURE__ */Caml_exceptions.create("Day10.ParseError");
 
 function parse(stream, ctx) {
   if (!stream) {
@@ -93,7 +93,7 @@ function parse(stream, ctx) {
         }
     default:
       throw {
-            RE_EXN_ID: Impossible,
+            RE_EXN_ID: ParseError,
             Error: new Error()
           };
   }
@@ -186,8 +186,6 @@ function getClosingChar(ctx) {
     
   }
 }
-
-var ParseError = /* @__PURE__ */Caml_exceptions.create("Day10.ParseError");
 
 function parse$1(stream, ctxs) {
   if (!stream) {
@@ -329,12 +327,11 @@ export {
   data ,
   sample ,
   naviData ,
-  Impossible ,
+  ParseError ,
   parseNext ,
   corruptionResults ,
   errorScore ,
   getClosingChar ,
-  ParseError ,
   parse$1 as parse,
   naviData_ok ,
   naviData_corrected ,

@@ -24,7 +24,7 @@ let naviData = data->Input.toLines
 
 type context = Empty | Round | Square | Curly | Angled
 
-exception Impossible
+exception ParseError
 
 let rec parse = (stream, ctx) => switch stream {
   | list{} => (true, list{})
@@ -41,7 +41,7 @@ let rec parse = (stream, ctx) => switch stream {
   | list{"<", ...r} => r->parseNext(ctx, Angled)
   | list{">", ...r} => if ctx == Angled { (true, r) } else { (false, list{">"}) }
 
-  | _ => raise(Impossible) //(false, list{})
+  | _ => raise(ParseError)
 }
 and parseNext = (stream, ctx, nextCtx) => {
   let (ok, r) = stream->parse(nextCtx)
@@ -71,8 +71,6 @@ Js.log2(corruptionResults, errorScore)
 let getClosingChar = ctx => switch ctx {
   | Empty => "" | Round => ")" | Square => "]" | Curly => "}" | Angled => ">"
 }
-
-exception ParseError
 
 let rec parse = (stream, ctxs) => switch stream {
   | list{} => ctxs->List.map(ctx => ctx->getClosingChar)
