@@ -73,12 +73,6 @@ let runSimulation = (data, maxSteps) => {
         row->Array.setExn(x, if energy > 0 { energy + 1 } else { energy })
       })
 
-      states := states.contents->Array.mapWithIndex((y,row) => row
-        ->Array.mapWithIndex((x,energy) =>
-          if ( toUpdate->Array.some(\"=="((x,y))) ) && energy > 0 {
-            energy + 1
-          } else { energy }
-        ))
 
       // determine if all octopuses flash simultaneously
       firstSynchronize := switch firstSynchronize.contents {

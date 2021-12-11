@@ -96,23 +96,6 @@ function runSimulation(data, maxSteps) {
               var energy = Belt_Array.getExn(row, x);
               return Belt_Array.setExn(row, x, energy > 0 ? energy + 1 | 0 : energy);
             }));
-      states.contents = Belt_Array.mapWithIndex(states.contents, (function(toUpdate){
-          return function (y, row) {
-            return Belt_Array.mapWithIndex(row, (function (x, energy) {
-                          var partial_arg = [
-                            x,
-                            y
-                          ];
-                          if (Belt_Array.some(toUpdate, (function (param) {
-                                    return partial_arg === param;
-                                  })) && energy > 0) {
-                            return energy + 1 | 0;
-                          } else {
-                            return energy;
-                          }
-                        }));
-          }
-          }(toUpdate)));
       var x = firstSynchronize;
       firstSynchronize = x !== undefined ? x : (
           Belt_Array.every(states.contents, (function (row) {
