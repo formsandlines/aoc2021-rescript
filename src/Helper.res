@@ -18,6 +18,58 @@ module Input = {
 
 }
 
+module Tuple = {
+  let has = elem => ( ((a,b)) => a == elem || b == elem )
+  let hasNot = elem => ( ((a,b)) => a != elem && b != elem )
+
+  module CmpInt =
+    Belt.Id.MakeComparable({
+      type t = (int, int)
+      let cmp = ((a0, a1), (b0, b1)) =>
+        switch (Pervasives.compare(a0, b0)) {
+        | 0 => Pervasives.compare(a1, b1)
+        | c => c
+        }
+    })
+
+  module CmpStr =
+    Belt.Id.MakeComparable({
+      type t = (string, string)
+      let cmp = ((a0, a1), (b0, b1)) =>
+        switch (Pervasives.compare(a0, b0)) {
+        | 0 => Pervasives.compare(a1, b1)
+        | c => c
+        }
+    })
+}
+
+module Tree = {
+  type rec t<'a> = Leaf('a) | Branch(array<t<'a>>)
+
+  let show = tree => {
+    let rec aux = (tree, d, i) => {
+      let indent = n => `  `->Js.String2.repeat(n)
+
+      switch tree {
+      | Leaf(str) => {
+          let idx = `<${d->Int.toString},${i->Int.toString}>`
+          str ++ " " ++ idx
+        }
+      | Branch(arr) => `\n` ++ indent(d) ++ "[ " ++ arr
+        ->Array.reduceWithIndex("", (acc, subtree, j) => {
+          let curr = subtree->aux(d+1, j)
+          let sep = j > 0 ? ", " : ""
+          let sep = if acc->Js.String2.endsWith("]") {
+              sep ++ (curr->Js.String2.endsWith("]") ? "" : `\n`) ++ indent(d+1)
+            } else { sep }
+          acc ++ sep ++ curr
+        }) ++ ` ]`
+      }
+    }
+    tree->aux(0, 0)
+  }
+}
+
 module BigInt = {
   type t
 
