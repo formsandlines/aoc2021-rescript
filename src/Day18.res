@@ -357,7 +357,7 @@ let solve2 = input => { // *
 
   let candidates = input->ArrayExt.cartesProd(2)
 
-  let mags = candidates->Array.reduce(0, (largest, cand) => {
+  let largestMag = candidates->Array.reduce(0, (largest, cand) => {
       let mag = switch cand {
         | [sfn_a, sfn_b] => SFNum.add(sfn_a, sfn_b)->SFNum.magnitude
         | _ => -1
@@ -365,7 +365,7 @@ let solve2 = input => { // *
       if mag > largest { mag } else { largest }
     })
 
-  Js.log(mags)
+  Js.log(largestMag)
 
 }
 

@@ -617,7 +617,7 @@ function solve1(input) {
 
 function solve2(input) {
   var candidates = Helper.ArrayExt.cartesProd(input, 2);
-  var mags = Belt_Array.reduce(candidates, 0, (function (largest, cand) {
+  var largestMag = Belt_Array.reduce(candidates, 0, (function (largest, cand) {
           var mag;
           if (cand.length !== 2) {
             mag = -1;
@@ -632,7 +632,7 @@ function solve2(input) {
             return largest;
           }
         }));
-  console.log(mags);
+  console.log(largestMag);
   
 }
 
