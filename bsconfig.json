@@ -4,7 +4,7 @@
   "sources": [{
     "dir" : "src",
     "subdirs" : true
-  }, { "dir" : "test", "subdirs" : true }],
+  }, { "dir" : "tests", "subdirs" : true, "type" : "dev" }],
   "package-specs": {
     "module": "es6-global",
     "in-source": true

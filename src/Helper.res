@@ -1,26 +1,108 @@
 open Belt
 
+/** Library extension for arrays */
 module ArrayExt = {
 
+  /** Discards all empty strings in given array */
   let filterEmptyStr = strArr => strArr
     ->Array.keep(str => str != "")
 
+  /** Parses all strings in given array as ints (unsafe) */
   let toIntArrExn = strArr => strArr
     ->Array.map(nStr => nStr->Int.fromString->Option.getExn)
+    
+  let flatMap = (arr, fn) => arr->Array.reduce([], (acc, x) =>
+    acc->Array.concat(x->fn) )
+
+  /**
+   * Cartesian product for Arrays
+   */
+  let cartesProd = (arr, dim) => {
+    let rec aux = (arr, seq, n) => {
+      if n > 0 {
+        arr->flatMap(x => arr->aux(seq->Array.concat([x]), n-1 ))
+      } else {
+        [ seq ]
+      }
+    }
+    arr->aux([], dim)
+  }
+}
+
+/** Library extension for floats */
+module FloatExt = {
+
+  /** Asserts if given float has a decimal place */
+  let hasDecimal = (x) => Float.fromInt(Float.toInt(x)) < x
+}
+
+/** Library extension for strings */
+module StringExt = {
+
+  /** If the length of given string is not a multiple of n,
+   *  pads the string with "0" or given padStr from left
+   *  or from right if toEnd == true
+   */
+  let padToXn = (~toEnd=false, ~padStr="0", str, n) => {
+    let diff = n - mod(str->Js.String2.length, n)
+    if diff < n {
+      if toEnd { 
+        str ++ padStr->Js.String2.repeat(diff)
+      } else {
+        padStr->Js.String2.repeat(diff) ++ str
+      }
+    } else { str }
+  }
+}
+
+/** Helper functions for number systems beyond decimal  */
+module NumSys = {
+
+  /** Converts hexadecimal to binary number string */
+  let hexToBin = (~pad=false, hexStr) => {
+    let n = ("0x" ++ hexStr)->Js.Float.fromString
+
+    if n->Js.Float.isNaN { None } else {
+      let binStr = n->Js.Float.toStringWithRadix(~radix=2)
+      
+      Some(pad ? binStr->StringExt.padToXn(4) : binStr)
+    }
+  }
+    /* ->Option.map(num => num */
+    /*   ->Js.Float.toStringWithRadix(~radix=2) */
+    /*   ->StringExt.padToXn(4)) */
 }
 
 module Input = {
 
+  /** Reads files synchronously using the node.js API
+   *  (see https://www.geeksforgeeks.org/node-js-fs-readfilesync-method/)
+   */
   let read = path => Node_fs.readFileSync(path, #utf8)
 
+  /** Splits input string into array at line-breaks, discards empty lines */
   let toLines = str => str->Js.String2.split("\n")
     ->ArrayExt.filterEmptyStr
 
 }
 
+/** Helper module for tuples (a,b)
+ *  with comparators to use in e.g. Sets or Maps
+ */
 module Tuple = {
+
   let has = elem => ( ((a,b)) => a == elem || b == elem )
   let hasNot = elem => ( ((a,b)) => a != elem && b != elem )
+
+  let fst = ((a,_)) => a
+  let snd = ((_,b)) => b
+  let get = ((a,b), i) => if i <= 0 { a } else { b }
+
+  let reduce = (pair, init, reducerFn) => {
+
+    let aux = (acc, pair, i) => pair->get(i)->reducerFn(acc, pair, i)
+    aux(aux(init, pair, 0), pair, 1)
+  }
 
   module CmpInt =
     Belt.Id.MakeComparable({
@@ -41,11 +123,20 @@ module Tuple = {
         | c => c
         }
     })
+
+  let getArrBounds = (~minFrom=Js.Int.max, ~maxFrom=0, tp) => tp
+    ->Array.reduce((minFrom, maxFrom), ((min,max), n) =>
+      (n < min ? n : min, n > max ? n : max))
+
 }
 
+/** Generic n-tree data structure */
 module Tree = {
   type rec t<'a> = Leaf('a) | Branch(array<t<'a>>)
 
+  /** Prints the tree in a readable indented format
+   *  (displays additional info about depth and order of Leafs in <…>)
+   */
   let show = tree => {
     let rec aux = (tree, d, i) => {
       let indent = n => `  `->Js.String2.repeat(n)
@@ -70,6 +161,7 @@ module Tree = {
   }
 }
 
+/** Binding module for BigInt type in JS */
 module BigInt = {
   type t
 
