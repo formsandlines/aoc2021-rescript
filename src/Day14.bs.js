@@ -105,7 +105,7 @@ function solve1(templ, rules) {
 }
 
 function solve2(templ, rules) {
-  var polymer = Belt_Array.reduce(Belt_Array.range(1, 40), templ, (function (polymer, param) {
+  var polymer = Belt_Array.reduce(Belt_Array.range(1, 20), templ, (function (polymer, param) {
           return polymerize(polymer, rules);
         }));
   var summary = summarize(polymer);
@@ -130,6 +130,8 @@ var polymerTempl = match[0];
 console.log(Belt_List.toArray(polymerTempl), Belt_Map.toArray(pairInsertRules));
 
 solve1(polymerTempl, pairInsertRules);
+
+solve2(polymerTempl, pairInsertRules);
 
 var ex1 = "NNCB\n\nCH -> B\nHH -> N\nCB -> H\nNH -> C\nHB -> C\nHC -> B\nHN -> C\nNN -> C\nBH -> H\nNC -> B\nNB -> B\nBN -> B\nBB -> N\nBC -> B\nCC -> N\nCN -> C";
 

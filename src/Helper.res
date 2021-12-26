@@ -53,6 +53,16 @@ module StringExt = {
       }
     } else { str }
   }
+
+}
+
+module SetExt = {
+
+  module CmpStr =
+    Belt.Id.MakeComparable({
+      type t = Set.String.t
+      let cmp = Set.String.cmp
+    })
 }
 
 /** Helper functions for number systems beyond decimal  */

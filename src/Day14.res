@@ -39,6 +39,11 @@ let polymerize = (templ, rules) => {
     ->List.reverse
 }
 
+let polymerize_fast = (templ, rules) => {
+
+
+}
+
 let summarize = polymer => {
   let types = polymer->List.toArray->Set.String.fromArray
 
@@ -72,7 +77,7 @@ let solve1 = (templ, rules) => { // *
 
 let solve2 = (templ, rules) => {
 
-  let polymer = Array.range(1,40)->Array.reduce(templ, (polymer, _) =>
+  let polymer = Array.range(1,20)->Array.reduce(templ, (polymer, _) =>
     polymer->polymerize(rules) )
 
   let summary = polymer->summarize
@@ -116,6 +121,9 @@ Js.log2(polymerTempl->List.toArray, pairInsertRules->Map.toArray)
 
 solve1(polymerTempl, pairInsertRules)
 
-/* solve2(polymerTempl, pairInsertRules) // <- "JavaScript heap out of memory"! */
+solve2(polymerTempl, pairInsertRules) // <- "JavaScript heap out of memory"!
+
+// Note: Only chunking might help for the 2. task
+
 
 
