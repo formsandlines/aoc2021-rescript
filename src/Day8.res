@@ -62,7 +62,7 @@ let part1 = (input, uniqueSegmDigits) => { // *
 }
 
 
-let part2 = (input, uniqueSegmDigits) => {
+let part2 = (input, uniqueSegmDigits) => { // *
 
   // for all lines, create arrays of segment-sets from each digit
   let inputSegmentSets = input->Array.map(line => switch line {
