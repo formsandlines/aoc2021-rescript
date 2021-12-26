@@ -9,6 +9,7 @@ import * as Caml_obj from "../node_modules/rescript/lib/es6/caml_obj.js";
 import * as Belt_Array from "../node_modules/rescript/lib/es6/belt_Array.js";
 import * as Caml_int32 from "../node_modules/rescript/lib/es6/caml_int32.js";
 import * as Belt_Option from "../node_modules/rescript/lib/es6/belt_Option.js";
+import * as Belt_SetString from "../node_modules/rescript/lib/es6/belt_SetString.js";
 
 function filterEmptyStr(strArr) {
   return Belt_Array.keep(strArr, (function (str) {
@@ -73,6 +74,14 @@ function padToXn(toEndOpt, padStrOpt, str, n) {
 
 var StringExt = {
   padToXn: padToXn
+};
+
+var CmpStr = Belt_Id.MakeComparable({
+      cmp: Belt_SetString.cmp
+    });
+
+var SetExt = {
+  CmpStr: CmpStr
 };
 
 function hexToBin(padOpt, hexStr) {
@@ -163,7 +172,7 @@ function cmp$1(param, param$1) {
   }
 }
 
-var CmpStr = Belt_Id.MakeComparable({
+var CmpStr$1 = Belt_Id.MakeComparable({
       cmp: cmp$1
     });
 
@@ -191,7 +200,7 @@ var Tuple = {
   get: get,
   reduce: reduce,
   CmpInt: CmpInt,
-  CmpStr: CmpStr,
+  CmpStr: CmpStr$1,
   getArrBounds: getArrBounds
 };
 
@@ -268,6 +277,7 @@ export {
   ArrayExt ,
   FloatExt ,
   StringExt ,
+  SetExt ,
   NumSys ,
   Input ,
   Tuple ,
@@ -275,4 +285,4 @@ export {
   $$BigInt$1 as $$BigInt,
   
 }
-/* CmpInt Not a pure module */
+/* CmpStr Not a pure module */
