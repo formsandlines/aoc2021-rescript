@@ -140,35 +140,55 @@ module Tuple = {
 
 }
 
-/** Generic n-tree data structure */
-module Tree = {
-  type rec t<'a> = Leaf('a) | Branch(array<t<'a>>)
+/** Simple n-ary tree structure based on arrays */
+module ArrayTree = {
+  type rec t<'a> = Branch('a, array<t<'a>>)
 
-  /** Prints the tree in a readable indented format
-   *  (displays additional info about depth and order of Leafs in <…>)
+  /** Prints the tree in a readable depth-indented format:
+   *  "<depth>-<order>: <node>"
    */
-  let show = tree => {
-    let rec aux = (tree, d, i) => {
-      let indent = n => `  `->Js.String2.repeat(n)
+  let show = (tree, showFn) => {
+    let indent = n => `  `->Js.String2.repeat(n)
 
-      switch tree {
-      | Leaf(str) => {
-          let idx = `<${d->Int.toString},${i->Int.toString}>`
-          str ++ " " ++ idx
-        }
-      | Branch(arr) => `\n` ++ indent(d) ++ "[ " ++ arr
-        ->Array.reduceWithIndex("", (acc, subtree, j) => {
-          let curr = subtree->aux(d+1, j)
-          let sep = j > 0 ? ", " : ""
-          let sep = if acc->Js.String2.endsWith("]") {
-              sep ++ (curr->Js.String2.endsWith("]") ? "" : `\n`) ++ indent(d+1)
-            } else { sep }
-          acc ++ sep ++ curr
-        }) ++ ` ]`
-      }
+    let rec aux = (Branch(node, subtrees), d, i) => {
+      let idx = `${d->Int.toString}-${i->Int.toString}`
+      `\n${indent(d) ++ idx}: ${node->showFn}` ++ subtrees
+        ->Array.reduceWithIndex("", (acc, subtree, j) =>
+          acc ++ subtree->aux(d+1, j))
     }
     tree->aux(0, 0)
   }
+
+  /** Finds all paths from a given end node down to the root
+   *  returns an array of index-lists (index of deepest node, …, root == 0)
+   */
+  let findPaths = (tree, endNode) => {
+
+    let rec aux = (tree: t<'a>, index) => switch tree {
+      | Branch(node, []) => if node == endNode { [index] } else { [] }
+      | Branch(_, subtrees) => subtrees
+        ->Array.reduceWithIndex([], (acc, subtree, i) => acc->Array.concat(
+          subtree->aux( index->List.add(i) )) )
+      }
+    tree->aux(list{0})
+  }
+
+  /** Gets all nodes from an index list (e.g. from findPaths) */
+  let getPathFromIndex = (indexList, tree) => {
+
+    let rec aux = (indexList, tree: t<string>) => switch tree {
+      | Branch(node, []) => list{ node }
+      | Branch(node, subtrees) => switch indexList {
+          | list{} => list{}
+          | list{i, ...rest} => switch subtrees->Array.get(i) {
+            | Some(subtree) => list{ node, ...rest->aux(subtree) }
+            | None => raise(Not_found)
+          }
+        }
+      }
+    indexList->List.tailExn->aux(tree)
+  }
+
 }
 
 /** Binding module for BigInt type in JS */

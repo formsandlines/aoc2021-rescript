@@ -6,6 +6,7 @@ import * as Js_int from "../node_modules/rescript/lib/es6/js_int.js";
 import * as Belt_Id from "../node_modules/rescript/lib/es6/belt_Id.js";
 import * as Belt_Int from "../node_modules/rescript/lib/es6/belt_Int.js";
 import * as Caml_obj from "../node_modules/rescript/lib/es6/caml_obj.js";
+import * as Belt_List from "../node_modules/rescript/lib/es6/belt_List.js";
 import * as Belt_Array from "../node_modules/rescript/lib/es6/belt_Array.js";
 import * as Caml_int32 from "../node_modules/rescript/lib/es6/caml_int32.js";
 import * as Belt_Option from "../node_modules/rescript/lib/es6/belt_Option.js";
@@ -204,26 +205,67 @@ var Tuple = {
   getArrBounds: getArrBounds
 };
 
-function show(tree) {
-  var aux = function (tree, d, i) {
-    if (tree.TAG !== /* Leaf */0) {
-      return "\n" + "  ".repeat(d) + "[ " + Belt_Array.reduceWithIndex(tree._0, "", (function (acc, subtree, j) {
-                    var curr = aux(subtree, d + 1 | 0, j);
-                    var sep = j > 0 ? ", " : "";
-                    var sep$1 = acc.endsWith("]") ? sep + (
-                        curr.endsWith("]") ? "" : "\n"
-                      ) + "  ".repeat(d + 1 | 0) : sep;
-                    return acc + sep$1 + curr;
-                  })) + " ]";
-    }
-    var idx = "<" + String(d) + "," + String(i) + ">";
-    return tree._0 + " " + idx;
+function show(tree, showFn) {
+  var aux = function (param, d, i) {
+    var idx = String(d) + "-" + String(i);
+    return "\n" + ("  ".repeat(d) + idx) + ": " + Curry._1(showFn, param._0) + Belt_Array.reduceWithIndex(param._1, "", (function (acc, subtree, j) {
+                  return acc + aux(subtree, d + 1 | 0, j);
+                }));
   };
   return aux(tree, 0, 0);
 }
 
-var Tree = {
-  show: show
+function findPaths(tree, endNode) {
+  var aux = function (tree, index) {
+    var subtrees = tree._1;
+    if (subtrees.length !== 0) {
+      return Belt_Array.reduceWithIndex(subtrees, [], (function (acc, subtree, i) {
+                    return Belt_Array.concat(acc, aux(subtree, Belt_List.add(index, i)));
+                  }));
+    } else if (Caml_obj.caml_equal(tree._0, endNode)) {
+      return [index];
+    } else {
+      return [];
+    }
+  };
+  return aux(tree, {
+              hd: 0,
+              tl: /* [] */0
+            });
+}
+
+function getPathFromIndex(indexList, tree) {
+  var aux = function (indexList, tree) {
+    var subtrees = tree._1;
+    var node = tree._0;
+    if (subtrees.length === 0) {
+      return {
+              hd: node,
+              tl: /* [] */0
+            };
+    }
+    if (!indexList) {
+      return /* [] */0;
+    }
+    var subtree = Belt_Array.get(subtrees, indexList.hd);
+    if (subtree !== undefined) {
+      return {
+              hd: node,
+              tl: aux(indexList.tl, subtree)
+            };
+    }
+    throw {
+          RE_EXN_ID: "Not_found",
+          Error: new Error()
+        };
+  };
+  return aux(Belt_List.tailExn(indexList), tree);
+}
+
+var ArrayTree = {
+  show: show,
+  findPaths: findPaths,
+  getPathFromIndex: getPathFromIndex
 };
 
 var cmp$2 = (function(a,b) {
@@ -281,7 +323,7 @@ export {
   NumSys ,
   Input ,
   Tuple ,
-  Tree ,
+  ArrayTree ,
   $$BigInt$1 as $$BigInt,
   
 }
